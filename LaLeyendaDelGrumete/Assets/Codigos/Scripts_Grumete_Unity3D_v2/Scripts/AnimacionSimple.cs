@@ -44,6 +44,8 @@ public class AnimacionSimple : MonoBehaviour
     bool muerto;
     Vector3 escalaBase;
     public bool Agachado { get; set; }
+    // true = pose de reposo aunque el personaje se mueva (por ejemplo sentado en el barco que navega)
+    public bool Quieto { get; set; }
     bool estabaAgachado;
 
     public float DuracionAtaque => atacar ? atacar.length : 0.6f;
@@ -116,9 +118,9 @@ public class AnimacionSimple : MonoBehaviour
     {
         Vector3 d = transform.position - ultimaPos; d.y = 0f;
         ultimaPos = transform.position;
-        float vel = d.magnitude / Mathf.Max(Time.deltaTime, 0.0001f);
+        float vel = Quieto ? 0f : d.magnitude / Mathf.Max(Time.deltaTime, 0.0001f);
 
-        bool suelo = cc ? cc.isGrounded : true;
+        bool suelo = Quieto || (cc ? cc.isGrounded : true);
         tiempoAire = suelo ? 0f : tiempoAire + Time.deltaTime;
         bool aire = tiempoAire > 0.1f;
         if (aire && !enAire && clips[S].IsValid()) clips[S].SetTime(0);
